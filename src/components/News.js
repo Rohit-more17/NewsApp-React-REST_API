@@ -22,6 +22,23 @@ export class News extends Component {
     catagory: PropTypes.string,
   };
 
+  async update(){
+    let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.catagory}&apiKey=2cc859b36f4b4f5f852352533daadc7a&page=${this.state.page}`;
+
+    this.setState({ loading: true });
+    let data = await fetch(url);
+
+    let parseData = await data.json();
+
+    
+
+    this.setState({
+      articles: parseData.articles,
+      totalResults: parseData.totalResults,
+      loading: false,
+    });
+  }
+
   async componentDidMount() {
     let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.catagory}&apiKey=2cc859b36f4b4f5f852352533daadc7a`;
 
@@ -40,31 +57,22 @@ export class News extends Component {
   }
 
   async handleNextClick() {
-    console.log("Next Clicked");
-    // if(Math. (this.state.totalResults/20));
-    let url = `https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=2cc859b36f4b4f5f852352533daadc7a&page=${this.state.page}`;
-    let data = await fetch(url);
-    let parseData = await data.json();
-    console.log(parseData);
+    
     this.setState({
       page: this.state.page + 1,
-      articles: parseData.articles,
+     
     });
+
+    this.update();
   }
 
   async handlePreviousClick() {
-    console.log("Previous Cliked");
-
-    let url = `https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=2cc859b36f4b4f5f852352533daadc7a&page=${
-      this.state.page - 1
-    }`;
-    let data = await fetch(url);
-    let parseData = await data.json();
-    console.log(parseData);
+   
     this.setState({
       page: this.state.page - 1,
-      articles: parseData.articles,
+      
     });
+    this.update();
   }
 
   render() {
@@ -87,6 +95,8 @@ export class News extends Component {
                   description={element.description}
                   imageUrl={element.urlToImage}
                   newsUrl={element.url}
+                  source={element.source.name}
+                  date={element.publishedAt}
                 ></NewsItem>
               </div>
             );
